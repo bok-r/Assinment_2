@@ -1,6 +1,11 @@
-/*
- * Image sources
- * - https://www.vecteezy.com/ | https://www.vecteezy.com/free-png/nature
+/* 31080 Interactive Media, Spring 2022 
+ * === Contributors ===
+ * Rebecca Lu [13560560]
+ * 
+ * 
+ * 
+ * 
+ * === Image sources ===
  * - spring tree: https://static.vecteezy.com/system/resources/previews/011/027/775/non_2x/hand-drawn-tree-watercolor-illustration-free-png.png
  * - autumn tree: https://static.vecteezy.com/system/resources/previews/011/027/801/non_2x/autumn-tree-watercolor-illustration-free-png.png
  * - flower: https://static.vecteezy.com/system/resources/previews/001/190/232/non_2x/flower-png.png
@@ -10,8 +15,10 @@
  * Sound Credits
  * - "Bird Whistling, Robin, Single, 13.wav" by InspectorJ (www.jshaw.co.uk) of Freesound.org
  *
+ * === Github ===
+ * https://github.com/Trigger-16/Assinment_2
  */
- 
+
 //=== INITIALISE GLOBAL VARIABLES ===
 import beads.*;
 import processing.sound.*;
@@ -47,21 +54,30 @@ SoundFile spr_sound;
 float amp;
 //CP5
 ButtonBar b;
-
+//Clock / pie chart 
+int cx, cy; //centre x, y
+//clock 
+//float secondsRadius;
+//float minutesRadius;
+//float hoursRadius;
+float clockDiameter;
+//pie
+float [] rVals = new float [12]; 
+float total = 0;
 //=== END GLOBAL VARIABLES ===
 
 void setup() {
   size(1300, 700);
   ac = new AudioContext();
   cp5 = new ControlP5(this);
-  
+
   //===INITIALISE FONT SETTINGS ===
   PFont p = createFont("Lato-Regular.ttf", 36); 
   ControlFont font = new ControlFont(p); // Initialise Font Settings
   cp5.setFont(font);
   //textFont(font);
   //=== END FONT SETTINGS ===
-  
+
   //=== LOAD TABLES ===
   //the eif-research.feit.uts.edu.au websites are down right now so no data can be retrieved
   //summer_xy = loadTable("https://eif-research.feit.uts.edu.au/graph/?rFromDate=2022-01-14T08%3A00&rToDate=2022-01-16T20%3A00&rFamily=wasp&rSensor=ES_B_04_415_7BD1&rSubSensor=HUMA#collapseOne", "csv");
@@ -77,6 +93,8 @@ void setup() {
   flower_img = loadImage("vecteezy_flower.png");
   imageMode(CENTER);
   //=== END LOAD IMAGES ===
+
+  //=== LOAD SOUND FILES ===
   sum_sound = new SoundFile(this, "summer_wave.wav");
   aut_sound = new SoundFile(this, "autumn_leaves.wav");
   win_sound = new SoundFile(this, "winter_thunder.aiff");
@@ -84,9 +102,32 @@ void setup() {
   //normalise sound files volumes
   sum_sound.amp(0.6);
   spr_sound.amp(0.3);
-  //=== LOAD SOUND FILES ===
-  
   //=== END SOUND FILES ===
+
+  //== CLOCK / PIE CHART SETTINGS ===
+  //clock
+  stroke(255);
+  cx = width / 2;
+  cy = (height+height/11) / 2;
+  int radius = min(width, height-height/10) / 2;
+  //secondsRadius = radius * 0.72;
+  //minutesRadius = radius * 0.60;
+  //hoursRadius = radius * 0.50;
+  clockDiameter = radius * 1.8;
+  //pie chart 
+  smooth();
+  int i = 0;
+  total = 0;
+  while (i < rVals.length) {
+    rVals [i] = 1;//random (5, 200);
+    total = total + rVals [i];
+    i += 1;
+  }
+  //=== END CLOCK / PIE CHART SETTINGS ===
+  
+  //=== MAP DATA TO CLOCK / PIE CHART ===
+  
+  //=== END MAP DATA TO CLOCK / PIE CHART ===
 
   //=== BUTTON BAR ===
   ButtonBar b = cp5.addButtonBar("bar")
@@ -98,23 +139,47 @@ void setup() {
     .setColorForeground(lightPeach)
     .setColorActive(lightPeach)
     ;
-   
-   //debug(b);
+  //=== END BUTTON BAR ===
+
+  //debug(b); //checks
 }
 
 void draw() {
   background(0);
+  //=== START CIRCLE / CLOCK ===
+  //clock background
+  fill(80);
+  noStroke();
+  ellipse(cx, cy, clockDiameter, clockDiameter);
+  //pie chart
+  stroke (255);
+  strokeWeight (0.5);
+  int numberOfElements = rVals.length;
+  float angleSteps = TWO_PI / total;
+  int i = 0;
+  float currentAngle = 0;
+  float startAngle = 0;
+
+  while (i < numberOfElements) {
+    currentAngle= angleSteps * rVals [i];
+    arc (cx, cy, clockDiameter, clockDiameter, startAngle, startAngle+currentAngle);
+    line (cx, cy, cx + cos(startAngle)*283, cy + sin(startAngle)*283);
+    startAngle = startAngle + currentAngle;
+    i += 1;
+  }
+  //=== END CIRCLE / CLOCK ===
 
   //=== IMGS ===
   //if img exists and boolean flag for season is True ...
+  //note: keep images on the top (e.g. at bottom of draw()
   if (sun_img != null && is_summer == true) {
-    image(sun_img, width/2, height/2, width/5, height/3);
+    image(sun_img, cx, cy, width/5, height/3);
   } else if (leaf_img != null && is_autumn  == true) {
-    image(leaf_img, width/2, height/2, width/8, height/3);
+    image(leaf_img, cx, cy, width/8, height/3);
   } else if (snowflake_img != null && is_winter  == true) {
-    image(snowflake_img, width/2, height/2, width/6, height/3);
+    image(snowflake_img, cx, cy, width/6, height/3);
   } else if (flower_img != null && is_spring  == true) {
-    image(flower_img, width/2, height/2, width/5, height/3);
+    image(flower_img, cx, cy, width/5, height/3);
   }
   //=== END IMGS ===
 }
@@ -131,7 +196,7 @@ void keyPressed() {
   } else if (key == '3') {
     bar(3);
   } else if (key == '4') {
-    bar(4); 
+    bar(4);
   } else {
     bar(0);
   }
