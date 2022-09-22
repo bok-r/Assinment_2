@@ -11,11 +11,15 @@
  */
 
 import beads.*;
+//import processing.sound.*;
 import java.util.Arrays; 
 import controlP5.*;
 
-ControlP5 cp5;
 AudioContext ac;
+
+ControlP5 cp5;
+//for sliders:
+//int season = 0;
 
 Table summer_xy;
 Table autumn_xy;
@@ -33,10 +37,22 @@ boolean is_winter;
 boolean is_spring;
 
 
+
+color peach = color(245, 101, 101);
+color lightPeach = color(245, 163, 163);
+
 void setup() {
   size(1300, 700);
   ac = new AudioContext();
-
+  cp5 = new ControlP5(this);
+  
+  //===INITIALISE FONT SETTINGS ===
+  PFont p = createFont("Lato-Regular.ttf", 36); 
+  ControlFont font = new ControlFont(p); // Initialise Font Settings
+  cp5.setFont(font);
+  //textFont(font);
+  //=== END FONT SETTINGS ===
+  
   //=== LOAD TABLES ===
   //the eif-research.feit.uts.edu.au websites are down right now so no data can be retrieved
   //summer_xy = loadTable("https://eif-research.feit.uts.edu.au/graph/?rFromDate=2022-01-14T08%3A00&rToDate=2022-01-16T20%3A00&rFamily=wasp&rSensor=ES_B_04_415_7BD1&rSubSensor=HUMA#collapseOne", "csv");
@@ -53,11 +69,39 @@ void setup() {
   imageMode(CENTER);
   //=== END LOAD IMAGES ===
 
+  //=== BUTTON BAR ===
+  ButtonBar b = cp5.addButtonBar("bar")
+    .setPosition(0, 0)
+    .setSize(width, height/10)
+    .addItems(split("a b c d e", " "))
+    //.setFont(p)  
+    .setColorBackground(peach)
+    .setColorForeground(lightPeach)
+    .setColorActive(lightPeach)
+    ;
+  println(b.getItem("a"));
+  b.changeItem("a", "text", "WELCOME");
+  b.changeItem("b", "text", "SUMMER");
+  b.changeItem("c", "text", "AUTUMN");
+  b.changeItem("d", "text", "WINTER");
+  b.changeItem("e", "text", "SPRING");
+  //=== END BUTTON BAR ===
+
   //=== CHECKS ===
+  //boolean initial values
   println("sum; ", is_summer);
   println("aut; ", is_autumn);
   println("win; ", is_winter);
   println("spr; ", is_spring);
+
+  //hover over buttons
+  //b.onMove(new CallbackListener() {
+  //  public void controlEvent(CallbackEvent ev) {
+  //    ButtonBar bar = (ButtonBar)ev.getController();
+  //    println("hovered! ", bar.hover()); //prints to command when hovering on buttons
+  //  }
+  //}
+  //);
 }
 
 void draw() {
@@ -77,32 +121,71 @@ void draw() {
   //=== END IMGS ===
 }
 
-//FOR NOW: when a key is pressed, change the season
-//This will be changed to when a slider value == value, change season
-void keyPressed() {
-  if (key == '1') {
+void bar(int n) {
+  println("bar clicked, item-value:", n);
+  if (n == 1) {
     is_summer = true;
     is_autumn = false;
     is_winter = false;
     is_spring = false;
     println("It's now summer: ", is_summer);
-  } else if (key == '2') {
+  } else if (n == 2) {
     is_summer = false;
     is_autumn = true;
     is_winter = false;
     is_spring = false;
     println("It's now autumn: ", is_autumn);
-  } else if (key == '3') {
+  } else if (n == 3) {
     is_summer = false;
     is_autumn = false;
     is_winter = true;
     is_spring = false;
     println("It's now winter: ", is_winter);
-  } else if (key == '4') {
+  } else if (n == 4) {
     is_summer = false;
     is_autumn = false;
     is_winter = false;
     is_spring = true;
     println("It's now spring: ", is_spring);
+  } else {
+    is_summer = false;
+    is_autumn = false;
+    is_winter = false;
+    is_spring = false;
+    println("Welcome!");
+  }
+}
+
+//FOR NOW: when a key is pressed, change the season
+//This will be changed to when a slider value == value, change season
+void keyPressed() {
+  if (key == '1') {
+    bar(1);
+    //is_summer = true;
+    //is_autumn = false;
+    //is_winter = false;
+    //is_spring = false;
+    //println("It's now summer: ", is_summer);
+  } else if (key == '2') {
+    bar(2);
+    //is_summer = false;
+    //is_autumn = true;
+    //is_winter = false;
+    //is_spring = false;
+    //println("It's now autumn: ", is_autumn);
+  } else if (key == '3') {
+    bar(3);
+    //is_summer = false;
+    //is_autumn = false;
+    //is_winter = true;
+    //is_spring = false;
+    //println("It's now winter: ", is_winter);
+  } else if (key == '4') {
+    bar(4); 
+    //is_summer = false;
+    //is_autumn = false;
+    //is_winter = false;
+    //is_spring = true;
+    //println("It's now spring: ", is_spring);
   }
 }
