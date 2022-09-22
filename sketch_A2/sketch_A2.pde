@@ -7,39 +7,48 @@
  * - sun: https://static.vecteezy.com/system/resources/previews/001/189/223/non_2x/sun-png.png
  * - leaf: https://static.vecteezy.com/system/resources/previews/009/342/562/non_2x/autumn-leaf-clipart-design-illustration-free-png.png
  * - snowflake: https://static.vecteezy.com/system/resources/previews/001/194/635/non_2x/snowflake-png.png
+ * Sound Credits
+ * - "Bird Whistling, Robin, Single, 13.wav" by InspectorJ (www.jshaw.co.uk) of Freesound.org
  *
  */
-
+ 
+//=== INITIALISE GLOBAL VARIABLES ===
 import beads.*;
-//import processing.sound.*;
+import processing.sound.*;
 import java.util.Arrays; 
 import controlP5.*;
 
 AudioContext ac;
-
 ControlP5 cp5;
-//for sliders:
-//int season = 0;
 
+//Data
 Table summer_xy;
 Table autumn_xy;
 Table winter_xy;
 Table spring_xy;
-
+//Images
 PImage sun_img;
 PImage leaf_img;
 PImage snowflake_img;
 PImage flower_img;
-
+//Flags
 boolean is_summer;
 boolean is_autumn;
 boolean is_winter;
 boolean is_spring;
-
-
-
+//Colours
 color peach = color(245, 101, 101);
 color lightPeach = color(245, 163, 163);
+//Sounds
+SoundFile sum_sound;
+SoundFile aut_sound;
+SoundFile win_sound;
+SoundFile spr_sound;
+float amp;
+//CP5
+ButtonBar b;
+
+//=== END GLOBAL VARIABLES ===
 
 void setup() {
   size(1300, 700);
@@ -68,47 +77,36 @@ void setup() {
   flower_img = loadImage("vecteezy_flower.png");
   imageMode(CENTER);
   //=== END LOAD IMAGES ===
+  sum_sound = new SoundFile(this, "summer_wave.wav");
+  aut_sound = new SoundFile(this, "autumn_leaves.wav");
+  win_sound = new SoundFile(this, "winter_thunder.aiff");
+  spr_sound = new SoundFile(this, "spring_bird.wav");
+  //normalise sound files volumes
+  sum_sound.amp(0.6);
+  spr_sound.amp(0.3);
+  //=== LOAD SOUND FILES ===
+  
+  //=== END SOUND FILES ===
 
   //=== BUTTON BAR ===
   ButtonBar b = cp5.addButtonBar("bar")
     .setPosition(0, 0)
     .setSize(width, height/10)
-    .addItems(split("a b c d e", " "))
+    .addItems(split("welcome summer autumn winter spring", " "))
     //.setFont(p)  
     .setColorBackground(peach)
     .setColorForeground(lightPeach)
     .setColorActive(lightPeach)
     ;
-  println(b.getItem("a"));
-  b.changeItem("a", "text", "WELCOME");
-  b.changeItem("b", "text", "SUMMER");
-  b.changeItem("c", "text", "AUTUMN");
-  b.changeItem("d", "text", "WINTER");
-  b.changeItem("e", "text", "SPRING");
-  //=== END BUTTON BAR ===
-
-  //=== CHECKS ===
-  //boolean initial values
-  println("sum; ", is_summer);
-  println("aut; ", is_autumn);
-  println("win; ", is_winter);
-  println("spr; ", is_spring);
-
-  //hover over buttons
-  //b.onMove(new CallbackListener() {
-  //  public void controlEvent(CallbackEvent ev) {
-  //    ButtonBar bar = (ButtonBar)ev.getController();
-  //    println("hovered! ", bar.hover()); //prints to command when hovering on buttons
-  //  }
-  //}
-  //);
+   
+   //debug(b);
 }
 
 void draw() {
   background(0);
 
   //=== IMGS ===
-  // if img exists and boolean flag for season is True, load img
+  //if img exists and boolean flag for season is True ...
   if (sun_img != null && is_summer == true) {
     image(sun_img, width/2, height/2, width/5, height/3);
   } else if (leaf_img != null && is_autumn  == true) {
@@ -121,71 +119,20 @@ void draw() {
   //=== END IMGS ===
 }
 
-void bar(int n) {
-  println("bar clicked, item-value:", n);
-  if (n == 1) {
-    is_summer = true;
-    is_autumn = false;
-    is_winter = false;
-    is_spring = false;
-    println("It's now summer: ", is_summer);
-  } else if (n == 2) {
-    is_summer = false;
-    is_autumn = true;
-    is_winter = false;
-    is_spring = false;
-    println("It's now autumn: ", is_autumn);
-  } else if (n == 3) {
-    is_summer = false;
-    is_autumn = false;
-    is_winter = true;
-    is_spring = false;
-    println("It's now winter: ", is_winter);
-  } else if (n == 4) {
-    is_summer = false;
-    is_autumn = false;
-    is_winter = false;
-    is_spring = true;
-    println("It's now spring: ", is_spring);
-  } else {
-    is_summer = false;
-    is_autumn = false;
-    is_winter = false;
-    is_spring = false;
-    println("Welcome!");
-  }
-}
+//BUTTON BAR (on next tab)
 
-//FOR NOW: when a key is pressed, change the season
-//This will be changed to when a slider value == value, change season
+//Just keep these for now; alternative to pressing the buttons 
+//It just doesn't change the active color
 void keyPressed() {
   if (key == '1') {
     bar(1);
-    //is_summer = true;
-    //is_autumn = false;
-    //is_winter = false;
-    //is_spring = false;
-    //println("It's now summer: ", is_summer);
   } else if (key == '2') {
     bar(2);
-    //is_summer = false;
-    //is_autumn = true;
-    //is_winter = false;
-    //is_spring = false;
-    //println("It's now autumn: ", is_autumn);
   } else if (key == '3') {
     bar(3);
-    //is_summer = false;
-    //is_autumn = false;
-    //is_winter = true;
-    //is_spring = false;
-    //println("It's now winter: ", is_winter);
   } else if (key == '4') {
     bar(4); 
-    //is_summer = false;
-    //is_autumn = false;
-    //is_winter = false;
-    //is_spring = true;
-    //println("It's now spring: ", is_spring);
+  } else {
+    bar(0);
   }
 }
