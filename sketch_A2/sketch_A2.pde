@@ -1,7 +1,7 @@
 /* 31080 Interactive Media, Spring 2022 
  * === Contributors ===
  * Rebecca Lu [13560560]
- * 
+ * Carmen Ly (13547599)
  * 
  * 
  * 
