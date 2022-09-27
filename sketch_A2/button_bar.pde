@@ -5,6 +5,7 @@ void bar(int n) {
     is_autumn = false;
     is_winter = false;
     is_spring = false;
+    is_welcome = false;
     println("It's now summer: ", is_summer);
     sum_sound.play();
   } else if (n == 2) {
@@ -12,6 +13,7 @@ void bar(int n) {
     is_autumn = true;
     is_winter = false;
     is_spring = false;
+    is_welcome = false;
     println("It's now autumn: ", is_autumn);
     aut_sound.play();
   } else if (n == 3) {
@@ -19,6 +21,7 @@ void bar(int n) {
     is_autumn = false;
     is_winter = true;
     is_spring = false;
+    is_welcome = false;
     println("It's now winter: ", is_winter);
     win_sound.play();
   } else if (n == 4) {
@@ -26,6 +29,7 @@ void bar(int n) {
     is_autumn = false;
     is_winter = false;
     is_spring = true;
+    is_welcome = false;
     println("It's now spring: ", is_spring);
     spr_sound.play();
   } else {
@@ -33,6 +37,7 @@ void bar(int n) {
     is_autumn = false;
     is_winter = false;
     is_spring = false;
+    is_welcome = true;
     println("Welcome!");
   }
 }
