@@ -1,9 +1,9 @@
 /* 31080 Interactive Media, Spring 2022 
  * === Contributors ===
  * Rebecca Lu [13560560]
+ * Zijia Zhu (13473778)
  * Carmen Ly (13547599)
- * 
- * 
+ * Adriel Carino ()
  * 
  * === Image sources ===
  * - spring tree: https://static.vecteezy.com/system/resources/previews/011/027/775/non_2x/hand-drawn-tree-watercolor-illustration-free-png.png
@@ -38,11 +38,13 @@ PImage sun_img;
 PImage leaf_img;
 PImage snowflake_img;
 PImage flower_img;
+//PImage moon_img;
 //Flags
 boolean is_summer;
 boolean is_autumn;
 boolean is_winter;
 boolean is_spring;
+boolean is_welcome = true;
 //Colours
 color peach = color(245, 101, 101);
 color lightPeach = color(245, 163, 163);
@@ -56,14 +58,17 @@ float amp;
 ButtonBar b;
 //Clock / pie chart 
 int cx, cy; //centre x, y
-//clock 
+//Clock
 //float secondsRadius;
 //float minutesRadius;
 //float hoursRadius;
 float clockDiameter;
-//pie
+//Pie Chart
 float [] rVals = new float [12]; 
 float total = 0;
+//Loading CSV/data
+int index = 0; //this is the index to iterate through datasets
+
 //=== END GLOBAL VARIABLES ===
 
 void setup() {
@@ -124,9 +129,9 @@ void setup() {
     i += 1;
   }
   //=== END CLOCK / PIE CHART SETTINGS ===
-  
+
   //=== MAP DATA TO CLOCK / PIE CHART ===
-  
+
   //=== END MAP DATA TO CLOCK / PIE CHART ===
 
   //=== BUTTON BAR ===
@@ -148,25 +153,17 @@ void draw() {
   background(0);
   //=== START CIRCLE / CLOCK ===
   //clock background
-  fill(80);
-  noStroke();
-  ellipse(cx, cy, clockDiameter, clockDiameter);
-  //pie chart
-  stroke (255);
-  strokeWeight (0.5);
-  int numberOfElements = rVals.length;
-  float angleSteps = TWO_PI / total;
-  int i = 0;
-  float currentAngle = 0;
-  float startAngle = 0;
-
-  while (i < numberOfElements) {
-    currentAngle= angleSteps * rVals [i];
-    arc (cx, cy, clockDiameter, clockDiameter, startAngle, startAngle+currentAngle);
-    line (cx, cy, cx + cos(startAngle)*283, cy + sin(startAngle)*283);
-    startAngle = startAngle + currentAngle;
-    i += 1;
-  }
+  if (is_welcome == true) {
+    welcome(); //have a function/method that creates the welcome screen
+  } else if (is_summer == true) {
+    summer();
+  } else if (is_autumn == true) {
+    autumn();
+  } else if (is_winter == true) {
+    winter();
+  } else if (is_spring == true) {
+    spring();
+  } 
   //=== END CIRCLE / CLOCK ===
 
   //=== IMGS ===
@@ -185,6 +182,27 @@ void draw() {
 }
 
 //BUTTON BAR (on next tab)
+void clockBackground() {
+  fill(80);
+    noStroke();
+    ellipse(cx, cy, clockDiameter, clockDiameter);
+    //pie chart
+    stroke (255);
+    strokeWeight (0.5);
+    int numberOfElements = rVals.length;
+    float angleSteps = TWO_PI / total;
+    int i = 0;
+    float currentAngle = 0;
+    float startAngle = 0;
+
+    while (i < numberOfElements) {
+      currentAngle= angleSteps * rVals [i];
+      arc (cx, cy, clockDiameter, clockDiameter, startAngle, startAngle+currentAngle);
+      line (cx, cy, cx + cos(startAngle)*283, cy + sin(startAngle)*283);
+      startAngle = startAngle + currentAngle;
+      i += 1;
+    }
+}
 
 //Just keep these for now; alternative to pressing the buttons 
 //It just doesn't change the active color
