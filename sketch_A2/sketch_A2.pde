@@ -3,7 +3,7 @@
  * Rebecca Lu [13560560]
  * Zijia Zhu (13473778)
  * Carmen Ly (13547599)
- * Adriel Carino ()
+ * Adriel Carino (13931908)
  * 
  * === Image sources ===
  * - spring tree: https://static.vecteezy.com/system/resources/previews/011/027/775/non_2x/hand-drawn-tree-watercolor-illustration-free-png.png
