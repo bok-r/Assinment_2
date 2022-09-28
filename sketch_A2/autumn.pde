@@ -1,5 +1,5 @@
 void autumn() {
-  clockBackground();
+  //clockBackground();
 
   //if (index < autumn_xy.getRowCount()) {
   //  //=== DO SOMETHING WITH DATA ===
