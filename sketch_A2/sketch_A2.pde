@@ -3,7 +3,8 @@
  * Rebecca Lu [13560560]
  * Zijia Zhu (13473778)
  * Carmen Ly (13547599)
- * Adriel Carino ()
+ * Adriel Carino (13931908)
+ // hello world
  * 
  * === Image sources ===
  * - spring tree: https://static.vecteezy.com/system/resources/previews/011/027/775/non_2x/hand-drawn-tree-watercolor-illustration-free-png.png
@@ -56,10 +57,6 @@ boolean is_welcome = true;
 color peach = color(245, 101, 101);
 color lightPeach = color(245, 163, 163);
 
-color foreground = color(79, 48, 131);
-color foregroundActive = color(185, 153, 237);
-color background = color(97, 87, 113, 80);
-
 //Sounds
 SoundFile sum_sound;
 SoundFile aut_sound;
@@ -68,14 +65,11 @@ SoundFile spr_sound;
 float amp;
 //CP5
 ButtonBar b;
-int sliderHeight = 100;
-int sliderWidth = 1300;
-int timeSum = 6;//panning between day and night, so only 12 hours 
-int timeAut = 6;//panning between day and night, so only 12 hours 
-int timeWin = 6;//panning between day and night, so only 12 hours 
-int timeSpr = 6;//panning between day and night, so only 12 hours 
-//Clock / pie chart 
+//Variables
 int cx, cy; //centre x, y
+int top_cx, top_cy; //top section, centre x, y
+int amX = 50; //x & y position for time slider labels
+int pmX, amY, pmY; 
 //Clock
 //float secondsRadius;
 //float minutesRadius;
@@ -94,15 +88,22 @@ void setup() {
   ac = new AudioContext();
   cp5 = new ControlP5(this);
 
-  //===INITIALISE FONT SETTINGS ===
+  //===INITIALISE SETTINGS ===
+  //== font ==
   PFont p = createFont("Lato-Regular.ttf", 36); 
   ControlFont font = new ControlFont(p); // Initialise Font Settings
   cp5.setFont(font);
-  //textFont(font);
-  //=== END FONT SETTINGS ===
-  //=== INITIALISE SLIDER SETTINGS ===
-
-  //=== END SLIDER SETTINGS ===
+  textFont(p);
+  textAlign(CENTER, CENTER);
+  //== variables ==
+  cx = width / 2;
+  cy = (height+height/11) / 2;
+  top_cx = cx;
+  top_cy = cy/2;
+  pmX = width - 50; //x position for time slider labels
+  amY = cy + 70; //y position for time slider labels
+  pmY = cy + 70;
+  //===END SETTINGS ===
 
   //=== LOAD TABLES ===
   //the eif-research.feit.uts.edu.au websites are down right now so no data can be retrieved
@@ -110,12 +111,10 @@ void setup() {
   //spring_xy = loadTable("https://eif-research.feit.uts.edu.au/graph/?rFromDate=2021-10-15T08%3A00&rToDate=2021-10-17T20%3A00&rFamily=wasp&rSensor=ES_B_04_415_7BD1&rSubSensor=HUMA#collapseOne", "csv");
   //autumn_xy = loadTable("https://eif-research.feit.uts.edu.au/graph/?rFromDate=2022-04-15T08%3A00&rToDate=2022-04-17T20%3A00&rFamily=wasp&rSensor=ES_B_04_415_7BD1&rSubSensor=HUMA#collapseOne", "csv");
   //winter_xy = loadTable("https://eif-research.feit.uts.edu.au/graph/?rFromDate=2022-07-15T08%3A00&rToDate=2022-07-17T20%3A00&rFamily=wasp&rSensor=ES_B_04_415_7BD1&rSubSensor=HUMA#collapseOne", "csv");
-
   sum_solar_xy = loadTable("SolarRadiation_Summer.csv", "csv");
   aut_solar_xy = loadTable("SolarRadiation_Autumn.csv", "csv");
   win_solar_xy = loadTable("SolarRadiation_Winter.csv", "csv");
   spr_solar_xy = loadTable("SolarRadiation_Spring.csv", "csv");
-
   sum_temp_xy = loadTable("AirTemp_Summer.csv", "csv");
   aut_temp_xy = loadTable("AirTemp_Autumn.csv", "csv");
   win_temp_xy = loadTable("AirTemp_Winter.csv", "csv");
@@ -135,22 +134,21 @@ void setup() {
   aut_sound = new SoundFile(this, "autumn_leaves.wav");
   win_sound = new SoundFile(this, "winter_thunder.aiff");
   spr_sound = new SoundFile(this, "spring_bird.wav");
-  //normalise sound files volumes
-  sum_sound.amp(0.6);
+  sum_sound.amp(0.6); //normalise sound files volumes
   spr_sound.amp(0.3);
   //=== END SOUND FILES ===
 
-  //== CLOCK / PIE CHART SETTINGS ===
-  //clock
+
+
+  //=== CLOCK / PIE CHART SETTINGS ===
+  //== clock ==
   stroke(255);
-  cx = width / 2;
-  cy = (height+height/11) / 2;
   int radius = min(width, height-height/10) / 2;
   //secondsRadius = radius * 0.72;
   //minutesRadius = radius * 0.60;
   //hoursRadius = radius * 0.50;
   clockDiameter = radius * 1.8;
-  //pie chart 
+  //== pie chart == 
   smooth();
   int i = 0;
   total = 0;
@@ -166,15 +164,7 @@ void setup() {
   //=== END MAP DATA TO CLOCK / PIE CHART ===
 
   //=== BUTTON BAR ===
-  ButtonBar b = cp5.addButtonBar("bar")
-    .setPosition(0, 0)
-    .setSize(width, height/10)
-    .addItems(split("welcome summer autumn winter spring", " "))
-    //.setFont(p)  
-    .setColorBackground(peach)
-    .setColorForeground(lightPeach)
-    .setColorActive(lightPeach)
-    ;
+  createButtonBar();
   //=== END BUTTON BAR ===
 
   //=== SLIDERS ===
@@ -188,8 +178,6 @@ void setup() {
 
 void draw() {
   background(0);
-  //=== START CIRCLE / CLOCK ===
-  //clock background
   if (is_welcome == true) {
     welcome(); //have a function/method that creates the welcome screen
     cp5.getController("timeSum").hide();
@@ -221,10 +209,16 @@ void draw() {
     cp5.getController("timeWin").hide();
     cp5.getController("timeSpr").show();
   } 
-  //=== END CIRCLE / CLOCK ===
 
+
+  //=== KEEP ALL OF THESE AT THE BOTTOM OF THE draw() FUNCTION ===
+  if (is_welcome) {
+  } else {
+    text("6am", amX, amY); //these will be just blelow the time sliders
+    text("6pm", pmX, pmY);
+    text("12pm", cx, cy + 70);
+  }
   //=== IMGS ===
-  //creating a new slider for each page
   if (sun_img != null && is_summer == true) {
     image(sun_img, cx, cy, width/5, height/4);
   } else if (leaf_img != null && is_autumn  == true) {

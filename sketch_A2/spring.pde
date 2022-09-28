@@ -1,10 +1,10 @@
 void spring() {
   //clockBackground();
   
-  //if (index < spring_xy.getRowCount()) {
-  //  //=== DO SOMETHING WITH DATA ===
+  if (index < spr_solar_xy.getRowCount()) {
+    //=== DO SOMETHING WITH DATA ===
     
-  //  //=== END SOMETHING WITH DATA ===
-  //  index++;
-  //}
+    //=== END SOMETHING WITH DATA ===
+    index++;
+  }
 }
