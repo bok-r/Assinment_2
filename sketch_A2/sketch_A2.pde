@@ -29,25 +29,37 @@ AudioContext ac;
 ControlP5 cp5;
 
 //Data
-Table summer_xy;
-Table autumn_xy;
-Table winter_xy;
-Table spring_xy;
+//Table summer_xy;
+//Table autumn_xy;
+//Table winter_xy;
+//Table spring_xy;
+Table sum_solar_xy;
+Table aut_solar_xy;
+Table win_solar_xy;
+Table spr_solar_xy;
+Table sum_temp_xy;
+Table aut_temp_xy;
+Table win_temp_xy;
+Table spr_temp_xy;
 //Images
 PImage sun_img;
 PImage leaf_img;
 PImage snowflake_img;
 PImage flower_img;
-//PImage moon_img;
 //Flags
 boolean is_summer;
 boolean is_autumn;
 boolean is_winter;
 boolean is_spring;
-boolean is_welcome = true;
+boolean is_welcome = true; 
 //Colours
 color peach = color(245, 101, 101);
 color lightPeach = color(245, 163, 163);
+
+color foreground = color(79, 48, 131);
+color foregroundActive = color(185, 153, 237);
+color background = color(97, 87, 113, 80);
+
 //Sounds
 SoundFile sum_sound;
 SoundFile aut_sound;
@@ -56,6 +68,12 @@ SoundFile spr_sound;
 float amp;
 //CP5
 ButtonBar b;
+int sliderHeight = 100;
+int sliderWidth = 1300;
+int timeSum = 6;//panning between day and night, so only 12 hours 
+int timeAut = 6;//panning between day and night, so only 12 hours 
+int timeWin = 6;//panning between day and night, so only 12 hours 
+int timeSpr = 6;//panning between day and night, so only 12 hours 
 //Clock / pie chart 
 int cx, cy; //centre x, y
 //Clock
@@ -82,6 +100,9 @@ void setup() {
   cp5.setFont(font);
   //textFont(font);
   //=== END FONT SETTINGS ===
+  //=== INITIALISE SLIDER SETTINGS ===
+
+  //=== END SLIDER SETTINGS ===
 
   //=== LOAD TABLES ===
   //the eif-research.feit.uts.edu.au websites are down right now so no data can be retrieved
@@ -89,6 +110,16 @@ void setup() {
   //spring_xy = loadTable("https://eif-research.feit.uts.edu.au/graph/?rFromDate=2021-10-15T08%3A00&rToDate=2021-10-17T20%3A00&rFamily=wasp&rSensor=ES_B_04_415_7BD1&rSubSensor=HUMA#collapseOne", "csv");
   //autumn_xy = loadTable("https://eif-research.feit.uts.edu.au/graph/?rFromDate=2022-04-15T08%3A00&rToDate=2022-04-17T20%3A00&rFamily=wasp&rSensor=ES_B_04_415_7BD1&rSubSensor=HUMA#collapseOne", "csv");
   //winter_xy = loadTable("https://eif-research.feit.uts.edu.au/graph/?rFromDate=2022-07-15T08%3A00&rToDate=2022-07-17T20%3A00&rFamily=wasp&rSensor=ES_B_04_415_7BD1&rSubSensor=HUMA#collapseOne", "csv");
+
+  sum_solar_xy = loadTable("SolarRadiation_Summer.csv", "csv");
+  aut_solar_xy = loadTable("SolarRadiation_Autumn.csv", "csv");
+  win_solar_xy = loadTable("SolarRadiation_Winter.csv", "csv");
+  spr_solar_xy = loadTable("SolarRadiation_Spring.csv", "csv");
+
+  sum_temp_xy = loadTable("AirTemp_Summer.csv", "csv");
+  aut_temp_xy = loadTable("AirTemp_Autumn.csv", "csv");
+  win_temp_xy = loadTable("AirTemp_Winter.csv", "csv");
+  spr_temp_xy = loadTable("AirTemp_Spring.csv", "csv");
   //=== END LOAD TABLES ===
 
   //=== LOAD IMAGES ===
@@ -146,6 +177,12 @@ void setup() {
     ;
   //=== END BUTTON BAR ===
 
+  //=== SLIDERS ===
+  timeSumSlider();
+  timeAutSlider();
+  timeWinSlider();
+  timeSprSlider();
+  //=== END SLIDERS ===
   //debug(b); //checks
 }
 
@@ -155,20 +192,39 @@ void draw() {
   //clock background
   if (is_welcome == true) {
     welcome(); //have a function/method that creates the welcome screen
+    cp5.getController("timeSum").hide();
+    cp5.getController("timeAut").hide();
+    cp5.getController("timeWin").hide();
+    cp5.getController("timeSpr").hide();
   } else if (is_summer == true) {
     summer();
+    cp5.getController("timeSum").show();
+    cp5.getController("timeAut").hide();
+    cp5.getController("timeWin").hide();
+    cp5.getController("timeSpr").hide();
   } else if (is_autumn == true) {
     autumn();
+    cp5.getController("timeSum").hide();
+    cp5.getController("timeAut").show();
+    cp5.getController("timeWin").hide();
+    cp5.getController("timeSpr").hide();
   } else if (is_winter == true) {
     winter();
+    cp5.getController("timeSum").hide();
+    cp5.getController("timeAut").hide();
+    cp5.getController("timeWin").show();
+    cp5.getController("timeSpr").hide();
   } else if (is_spring == true) {
     spring();
+    cp5.getController("timeSum").hide();
+    cp5.getController("timeAut").hide();
+    cp5.getController("timeWin").hide();
+    cp5.getController("timeSpr").show();
   } 
   //=== END CIRCLE / CLOCK ===
 
   //=== IMGS ===
-  //if img exists and boolean flag for season is True ...
-  //note: keep images on the top (e.g. at bottom of draw()
+  //creating a new slider for each page
   if (sun_img != null && is_summer == true) {
     image(sun_img, cx, cy, width/5, height/4);
   } else if (leaf_img != null && is_autumn  == true) {
@@ -184,24 +240,24 @@ void draw() {
 //BUTTON BAR (on next tab)
 void clockBackground() {
   fill(80);
-    noStroke();
-    ellipse(cx, cy, clockDiameter, clockDiameter);
-    //pie chart
-    stroke (255);
-    strokeWeight (0.5);
-    int numberOfElements = rVals.length;
-    float angleSteps = TWO_PI / total;
-    int i = 0;
-    float currentAngle = 0;
-    float startAngle = 0;
+  noStroke();
+  ellipse(cx, cy, clockDiameter, clockDiameter);
+  //pie chart
+  stroke (255);
+  strokeWeight (0.5);
+  int numberOfElements = rVals.length;
+  float angleSteps = TWO_PI / total;
+  int i = 0;
+  float currentAngle = 0;
+  float startAngle = 0;
 
-    while (i < numberOfElements) {
-      currentAngle= angleSteps * rVals [i];
-      arc (cx, cy, clockDiameter, clockDiameter, startAngle, startAngle+currentAngle);
-      line (cx, cy, cx + cos(startAngle)*283, cy + sin(startAngle)*283);
-      startAngle = startAngle + currentAngle;
-      i += 1;
-    }
+  while (i < numberOfElements) {
+    currentAngle= angleSteps * rVals [i];
+    arc (cx, cy, clockDiameter, clockDiameter, startAngle, startAngle+currentAngle);
+    line (cx, cy, cx + cos(startAngle)*283, cy + sin(startAngle)*283);
+    startAngle = startAngle + currentAngle;
+    i += 1;
+  }
 }
 
 //Just keep these for now; alternative to pressing the buttons 

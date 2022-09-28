@@ -1,5 +1,5 @@
 void winter() {
-  clockBackground();
+  //clockBackground();
 
   //if (index < winter_xy.getRowCount()) {
   //  //=== DO SOMETHING WITH DATA ===
