@@ -72,7 +72,7 @@ int index = 0; //this is the index to iterate through datasets
 //=== END GLOBAL VARIABLES ===
 
 void setup() {
-  size(1300, 700);
+  size(1300, 900);
   ac = new AudioContext();
   cp5 = new ControlP5(this);
 
@@ -170,13 +170,13 @@ void draw() {
   //if img exists and boolean flag for season is True ...
   //note: keep images on the top (e.g. at bottom of draw()
   if (sun_img != null && is_summer == true) {
-    image(sun_img, cx, cy, width/5, height/3);
+    image(sun_img, cx, cy, width/5, height/4);
   } else if (leaf_img != null && is_autumn  == true) {
-    image(leaf_img, cx, cy, width/8, height/3);
+    image(leaf_img, cx, cy, width/8, height/4);
   } else if (snowflake_img != null && is_winter  == true) {
-    image(snowflake_img, cx, cy, width/6, height/3);
+    image(snowflake_img, cx, cy, width/6, height/4);
   } else if (flower_img != null && is_spring  == true) {
-    image(flower_img, cx, cy, width/5, height/3);
+    image(flower_img, cx, cy, width/5, height/4);
   }
   //=== END IMGS ===
 }
