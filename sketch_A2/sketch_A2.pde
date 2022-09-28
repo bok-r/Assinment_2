@@ -49,11 +49,10 @@ PImage leaf_img;
 PImage snowflake_img;
 PImage flower_img;
 //Flags
-boolean is_summer;
-boolean is_autumn;
-boolean is_winter;
-boolean is_spring;
+boolean is_summer, is_autumn, is_winter, is_spring;
 boolean is_welcome = true; 
+boolean is_day = true;
+boolean is_night;
 //Colours
 color peach = color(245, 101, 101);
 color lightPeach = color(245, 163, 163);
@@ -139,8 +138,6 @@ void setup() {
   spr_sound.amp(0.3);
   //=== END SOUND FILES ===
 
-
-
   //=== CLOCK / PIE CHART SETTINGS ===
   //== clock ==
   stroke(255);
@@ -160,10 +157,6 @@ void setup() {
   }
   //=== END CLOCK / PIE CHART SETTINGS ===
 
-  //=== MAP DATA TO CLOCK / PIE CHART ===
-
-  //=== END MAP DATA TO CLOCK / PIE CHART ===
-
   //=== BUTTON BAR ===
   createButtonBar();
   //=== END BUTTON BAR ===
@@ -174,6 +167,10 @@ void setup() {
   timeWinSlider();
   timeSprSlider();
   //=== END SLIDERS ===
+
+  //=== BOTTOM STRIP BUTTONS (AIR TEMP DATA[?]) ==
+  createBottomButtons();
+  //=== END BOTTOM STRIP BUTTONS ===
   //debug(b); //checks
 }
 
@@ -181,58 +178,52 @@ void draw() {
   background(0);
   if (is_welcome == true) {
     welcome(); //have a function/method that creates the welcome screen
-    cp5.getController("timeSum").hide();
-    cp5.getController("timeAut").hide();
-    cp5.getController("timeWin").hide();
-    cp5.getController("timeSpr").hide();
+    hideTimeSliders();
+    hideAllButtons();
   } else if (is_summer == true) {
     summer();
-    cp5.getController("timeSum").show();
-    cp5.getController("timeAut").hide();
-    cp5.getController("timeWin").hide();
-    cp5.getController("timeSpr").hide();
+    showSumSlid();
+    showSumBut();
   } else if (is_autumn == true) {
     autumn();
-    cp5.getController("timeSum").hide();
-    cp5.getController("timeAut").show();
-    cp5.getController("timeWin").hide();
-    cp5.getController("timeSpr").hide();
+    showAutSlid();
+    showAutBut();
   } else if (is_winter == true) {
     winter();
-    cp5.getController("timeSum").hide();
-    cp5.getController("timeAut").hide();
-    cp5.getController("timeWin").show();
-    cp5.getController("timeSpr").hide();
+    showWinSlid();
+    showWinBut();
   } else if (is_spring == true) {
     spring();
-    cp5.getController("timeSum").hide();
-    cp5.getController("timeAut").hide();
-    cp5.getController("timeWin").hide();
-    cp5.getController("timeSpr").show();
+    showSprSlid();
+    showSprBut();
   } 
 
-
   //=== KEEP ALL OF THESE AT THE BOTTOM OF THE draw() FUNCTION ===
-  if (is_welcome) {
-  } else {
-    text("6am", amX, amY); //these will be just blelow the time sliders
-    text("6pm", pmX, pmY);
-    text("12pm", cx, cy + 70);
-  }
   //=== IMGS ===
   if (sun_img != null && is_summer == true) {
-    image(sun_img, cx, cy, width/5, height/4);
+    image(sun_img, width-100, height/10+80, width/10.2, height/8); //image(sun_img, cx, cy, width/5, height/4);
   } else if (leaf_img != null && is_autumn  == true) {
-    image(leaf_img, cx, cy, width/8, height/4);
+    image(leaf_img, width-100, height/10+80, width/16, height/8); //image(leaf_img, cx, cy, width/8, height/4);
   } else if (snowflake_img != null && is_winter  == true) {
-    image(snowflake_img, cx, cy, width/6, height/4);
+    image(snowflake_img, width-100, height/10+80, width/12, height/8); //image(snowflake_img, cx, cy, width/6, height/4);
   } else if (flower_img != null && is_spring  == true) {
-    image(flower_img, cx, cy, width/5, height/4);
+    image(flower_img, width-100, height/10+80, width/10, height/8); //image(flower_img, cx, cy, width/5, height/4);
   }
   //=== END IMGS ===
+
+  if (is_welcome) {
+  } else if (is_welcome == false && is_day == true) {
+    text("6am", amX, amY); //these will be just below the time sliders
+    text("6pm", pmX, pmY);
+    text("12pm", cx, cy + 70);
+  } else if (is_welcome == false && is_night == true) {
+    text("6pm", amX, amY-50); //swap these values for nightime
+    text("6am", pmX, pmY-50);
+    text("12am", cx, cy+20);
+  }
 }
 
-//BUTTON BAR (on next tab)
+
 void clockBackground() {
   fill(80);
   noStroke();
@@ -266,6 +257,14 @@ void keyPressed() {
     bar(3);
   } else if (key == '4') {
     bar(4);
+  } else if (key == 'n') {
+    is_night = true;
+    is_day = false;
+    println("it's night! ", is_night);
+  } else if (key == 'd') {
+    is_night = false;
+    is_day = true;
+    println("it's night! ", is_day);
   } else {
     bar(0);
   }

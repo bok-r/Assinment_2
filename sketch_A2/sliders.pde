@@ -10,6 +10,7 @@ int timeAut = 6;//panning between day and night, so only 12 hours
 int timeWin = 6;//panning between day and night, so only 12 hours 
 int timeSpr = 6;//panning between day and night, so only 12 hours 
 
+//=== CREATE SLIDERS ===
 void timeSumSlider() {
   cp5.addSlider("timeSum")
     .setPosition(0, cy)
@@ -71,5 +72,42 @@ void timeSprSlider() {
     ;
   cp5.getController("timeSpr").getValueLabel().hide();//.align(ControlP5.LEFT, ControlP5.TOP_OUTSIDE).setPaddingX(5);
   cp5.getController("timeSpr").getCaptionLabel().hide();//.align(ControlP5.RIGHT, ControlP5.TOP_OUTSIDE).setPaddingX(5);
-  cp5.getController("timeSpr").hide();  
+  cp5.getController("timeSpr").hide();
+}
+
+
+//=== FUNCTIONS TO TOGGLE ON/OFF SLIDERS ===
+void hideTimeSliders() {
+  cp5.getController("timeSum").hide();
+  cp5.getController("timeAut").hide();
+  cp5.getController("timeWin").hide();
+  cp5.getController("timeSpr").hide();
+}
+
+void showSumSlid() {
+  cp5.getController("timeSum").show();
+  cp5.getController("timeAut").hide();
+  cp5.getController("timeWin").hide();
+  cp5.getController("timeSpr").hide();
+}
+
+void showAutSlid() {
+  cp5.getController("timeSum").hide();
+  cp5.getController("timeAut").show();
+  cp5.getController("timeWin").hide();
+  cp5.getController("timeSpr").hide();
+}
+
+void showWinSlid() {
+  cp5.getController("timeSum").hide();
+  cp5.getController("timeAut").hide();
+  cp5.getController("timeWin").show();
+  cp5.getController("timeSpr").hide();
+}
+
+void showSprSlid() {
+  cp5.getController("timeSum").hide();
+  cp5.getController("timeAut").hide();
+  cp5.getController("timeWin").hide();
+  cp5.getController("timeSpr").show();
 }
