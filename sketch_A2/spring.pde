@@ -1,5 +1,5 @@
 void spring() {
-  clockBackground();
+  //clockBackground();
   
   //if (index < spring_xy.getRowCount()) {
   //  //=== DO SOMETHING WITH DATA ===
