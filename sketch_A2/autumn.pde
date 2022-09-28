@@ -1,10 +1,10 @@
 void autumn() {
   //clockBackground();
 
-  //if (index < autumn_xy.getRowCount()) {
-  //  //=== DO SOMETHING WITH DATA ===
+  if (index < aut_solar_xy.getRowCount()) {
+    //=== DO SOMETHING WITH DATA ===
 
-  //  //=== END SOMETHING WITH DATA ===
-  //  index++;
-  //}
+    //=== END SOMETHING WITH DATA ===
+    index++;
+  }
 }
